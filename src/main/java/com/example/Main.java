@@ -1,26 +1,87 @@
 package com.example;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 
 public class Main extends Application {
+    private Dictionary<String, Brick> bricks = new Hashtable<String, Brick>();
+    private Player player;
+    private Ball ball;
+    private double screenHeight;
+    private double screenWidth;
+
+    public Main() {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        // to account for the upper and lower bars
+        this.screenHeight = dimension.getHeight()-74;
+        this.screenWidth = dimension.getWidth();
+
+        this.player = new Player((int)screenWidth/2, (int)screenHeight-50, 100, 10);
+        this.ball = new Ball((int)screenWidth/2, (int)screenHeight/2, 10);
+    }
 
     @Override
     public void start(Stage stage) {
-        Button button = new Button("Click me!");
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.setStyle("-fx-background-color: black;");
+        anchorPane.getChildren().add(this.player);
+        anchorPane.setLeftAnchor(this.player, (this.screenWidth/2 - 50));
+        anchorPane.setBottomAnchor(this.player, 20.0);
 
-        button.setOnAction(e -> System.out.println("Clicked!"));
+        anchorPane.getChildren().add(this.ball);
+        anchorPane.setLeftAnchor(this.ball, (this.screenWidth/2 - 5));
+        anchorPane.setBottomAnchor(this.ball, (this.screenHeight/2 - 5));
 
-        Scene scene = new Scene(button, 400, 200);
+        setFirstLevel(anchorPane);
 
-        stage.setTitle("JavaFX Maven App");
+        Scene scene = new Scene(anchorPane, this.screenWidth, this.screenHeight);
+
+        stage.setTitle("Brick breaker game");
         stage.setScene(scene);
         stage.show();
     }
 
     public static void main(String[] args) {
         launch();
+    }
+
+    public void setFirstLevel(AnchorPane anchorPane){
+        int brickWidth = 60;
+        int brickHeight = 20;
+        int brickSpaceVertical = 15;
+        int brickSpaceHorizontal = 15;
+        // Countign how many bricks fit in a row
+        int bricksPerRow = (int) (this.screenWidth/(brickWidth+brickSpaceHorizontal));
+        // Countign how many pixels are left over
+        int pixels_left = (int) this.screenWidth%(brickWidth+brickSpaceHorizontal);
+
+        for (int row = 0; row < 5; row++) {
+            // Countign how many pixels are left over from between the bricks and dividing by 2
+            // to get the space on the left and right of the row
+            brickSpaceHorizontal = 15 +(pixels_left%(bricksPerRow-1))/2;
+            for (int col = 0; col < bricksPerRow; col++) {
+                Brick brick = new Brick(brickSpaceHorizontal, brickSpaceVertical, brickWidth, brickHeight);
+                bricks.put(Integer.toString(row) + Integer.toString(col), brick);
+                anchorPane.getChildren().add(brick);
+                anchorPane.setLeftAnchor(brick, (double) brickSpaceHorizontal);
+                anchorPane.setTopAnchor(brick, (double) brickSpaceVertical);
+                brickSpaceHorizontal += brickWidth + 15;
+            }
+            // Upping vertical height for the next row
+            brickSpaceVertical += brickHeight + 15;
+        }
+
     }
 }
