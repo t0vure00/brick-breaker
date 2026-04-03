@@ -5,11 +5,8 @@ import java.util.Hashtable;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -36,17 +33,18 @@ public class Main extends Application {
     public void start(Stage stage) {
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setStyle("-fx-background-color: black;");
+        
         anchorPane.getChildren().add(this.player);
-        anchorPane.setLeftAnchor(this.player, (this.screenWidth/2 - 50));
         anchorPane.setBottomAnchor(this.player, 20.0);
-
+        
         anchorPane.getChildren().add(this.ball);
         anchorPane.setLeftAnchor(this.ball, (this.screenWidth/2 - 5));
         anchorPane.setBottomAnchor(this.ball, (this.screenHeight/2 - 5));
-
+        
         setFirstLevel(anchorPane);
-
+        
         Scene scene = new Scene(anchorPane, this.screenWidth, this.screenHeight);
+        MoveWithArrows moveArrows = new MoveWithArrows(scene, this.player);
 
         stage.setTitle("Brick breaker game");
         stage.setScene(scene);
@@ -82,6 +80,5 @@ public class Main extends Application {
             // Upping vertical height for the next row
             brickSpaceVertical += brickHeight + 15;
         }
-
     }
 }
