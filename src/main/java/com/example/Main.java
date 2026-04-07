@@ -8,6 +8,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.Dimension;
@@ -46,11 +47,17 @@ public class Main extends Application {
         Scene scene = new Scene(anchorPane, this.screenWidth, this.screenHeight);
         MoveWithArrows moveArrows = new MoveWithArrows(scene, this.player);
 
+        Player player1 = this.player;
         // To update the ball's position every frame
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                ball.update();
+                ball.update(player1);
+
+                if (ball.checkStatus()) {
+                    this.stop();
+                    ball.setFill(Color.BLACK);
+                }
             }
         }.start();
 
