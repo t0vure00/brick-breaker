@@ -54,7 +54,9 @@ public class Main extends Application {
             public void handle(long now) {
                 ball.update(player1);
 
-                if (ball.checkStatus()) {
+                checkCollisionWithPlayer();
+
+                if (ball.getStatus()) {
                     this.stop();
                     ball.setFill(Color.BLACK);
                 }
@@ -70,7 +72,7 @@ public class Main extends Application {
         launch();
     }
 
-    public void setFirstLevel(AnchorPane anchorPane){
+    private void setFirstLevel(AnchorPane anchorPane){
         int brickWidth = 60;
         int brickHeight = 20;
         int brickSpaceVertical = 15;
@@ -94,6 +96,30 @@ public class Main extends Application {
             }
             // Upping vertical height for the next row
             brickSpaceVertical += brickHeight + 15;
+        }
+    }
+
+    
+    private void checkCollisionWithPlayer(){
+        boolean isHOnLevelWPlayer = ball.getCenterX() >= player.getLayoutX() && 
+                        ball.getCenterX() <= player.getLayoutX() + player.getWidth();
+        boolean isVOnLevelWPlayer = ball.getCenterY() >= player.getLayoutY() && 
+                        ball.getCenterY() <= player.getLayoutY() + player.getHeight();
+        double ballBottom = ball.getCenterY() + (ball.getRadiusY()*0.7);
+        double ballTop = ball.getCenterY() - (ball.getRadiusY()*0.7);
+        boolean isCollidingWTop = isHOnLevelWPlayer && ballBottom >= player.getLayoutY() - 2 && ballBottom <= player.getLayoutY() + 2;
+        boolean isCollidingWBottom = isHOnLevelWPlayer && ballTop == player.getLayoutY() + player.getHeight();
+        boolean isCollidingWLSide = isVOnLevelWPlayer && ball.getCenterX() + ball.getRadiusX() >= player.getLayoutX() + 2 && ball.getCenterX() + ball.getRadiusX() <= player.getLayoutX() - 2;
+        boolean isCollidingWRSide = isVOnLevelWPlayer && ball.getCenterX() == player.getLayoutX() + player.getWidth();
+        
+        if(isCollidingWTop || isCollidingWBottom){
+            double[] vxvy = ball.getVelocity(); 
+            ball.setVelocity(vxvy[0], vxvy[1]*-1);
+        }
+
+        if (isCollidingWLSide || isCollidingWRSide) {
+            double[] vxvy = ball.getVelocity(); 
+            ball.setVelocity(vxvy[0]*-1, vxvy[1]);
         }
     }
 }

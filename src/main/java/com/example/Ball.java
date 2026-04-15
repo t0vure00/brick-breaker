@@ -1,7 +1,5 @@
 package com.example;
 
-import java.util.Random;
-
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 
@@ -23,9 +21,21 @@ public class Ball extends Ellipse{
         this.screenHeight = screenHeight;
     }
 
+    public double[] getVelocity(){
+        return new double[] {this.vx, this.vy};
+    }
+
     public void setVelocity(double vx, double vy){
         this.vx = vx;
         this.vy = vy;
+    }
+    
+    public boolean getStatus(){
+        return this.gameOver;
+    }
+
+    public void setStatus(boolean status){
+        this.gameOver = status;
     }
 
     public void update(Player player){
@@ -47,29 +57,5 @@ public class Ball extends Ellipse{
         }else if(this.getCenterY() >= this.screenHeight - r){
             this.gameOver = true;
         }
-
-        boolean isHOnLevelWPlayer = this.getCenterX() >= player.getLayoutX() && 
-                        this.getCenterX() <= player.getLayoutX() + player.getWidth();
-        boolean isVOnLevelWPlayer = this.getCenterY() >= player.getLayoutY() && 
-                        this.getCenterY() <= player.getLayoutY() + player.getHeight();
-        double ballBottom = this.getCenterY() + (this.getRadiusY()*0.7);
-        double ballTop = this.getCenterY() - (this.getRadiusY()*0.7);
-        boolean isCollidingWTop = isHOnLevelWPlayer && ballBottom >= player.getLayoutY() - 2 && ballBottom <= player.getLayoutY() + 2;
-        boolean isCollidingWBottom = isHOnLevelWPlayer && ballTop == player.getLayoutY() + player.getHeight();
-        boolean isCollidingWLSide = isVOnLevelWPlayer && this.getCenterX() + this.getRadiusX() >= player.getLayoutX() + 2 && this.getCenterX() + this.getRadiusX() <= player.getLayoutX() - 2;
-        boolean isCollidingWRSide = isVOnLevelWPlayer && this.getCenterX() == player.getLayoutX() + player.getWidth();
-
-        
-        if(isCollidingWTop || isCollidingWBottom){
-            this.vy *= -1;
-        }
-
-        if (isCollidingWLSide || isCollidingWRSide) {
-            this.vx *= -1;
-        }
-    }
-
-    public boolean checkStatus(){
-        return this.gameOver;
     }
 }
